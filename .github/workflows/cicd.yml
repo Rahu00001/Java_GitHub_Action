@@ -10,11 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
       - name: Get ResourceBase version
-        id: resourcebase
         run: |
-          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            echo "version=${{ github.event.client_payload.resource_base_version }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "version=" >> "$GITHUB_OUTPUT"
-          fi
+          VERSION="${{ github.event.client_payload.resource_base_version }}"
+          echo "ResourceBase version: $VERSION"
+      
+      - name: Update pom.xml
+        run: |
+          VERSION="${{ github.event.client_payload.resource_base_version }}"
+      
+          mvn versions:set \
+            -DnewVersion="$VERSION" \
+            -DgenerateBackupPoms=false
+      
+          echo "Updated pom.xml:"
+          grep -n "<version>" pom.xml
