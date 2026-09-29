@@ -5,6 +5,8 @@ on:
   repository_dispatch:
     types:
       - resource-base-updated
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
